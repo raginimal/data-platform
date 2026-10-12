@@ -21,8 +21,8 @@ exempt_paths: ["*/README.md", "README.md", "*-template.yaml", "*-template.md"]
 boundaries:
   - id: BL-APP
     area: "Application Architecture"
-    baseline: "Approved application pattern (for example modular monolith or services) and layering"
-    flexible: "Module internals, naming, algorithms, and feature code within the approved pattern"
+    baseline: "ai-data-platform uses a modular monolith with library and command-line interfaces and inward-pointing layers"
+    flexible: "Module internals, naming, algorithms, and feature code within the modular monolith"
     change_summary: "Application pattern or layering changed"
     impact_paths: ["ARCHITECTURE.md", "docs/architecture/*"]
     change_paths: []
@@ -30,7 +30,7 @@ boundaries:
 
   - id: BL-COMP
     area: "Major Components and Service Boundaries"
-    baseline: "Approved services/components, their ownership, and their service contracts"
+    baseline: "Ingestion, DuckDB adapter, dbt transformation, contract and quality, lineage, and explanation components with explicit ownership"
     flexible: "Private implementation of a component behind its contract"
     change_summary: "Service or component boundary changed"
     impact_paths: ["src/service-contract*", "src/*/service-contract*"]
@@ -39,26 +39,26 @@ boundaries:
 
   - id: BL-TECH
     area: "Technology and Platform"
-    baseline: "Approved language, runtime, cloud/platform, and infrastructure provider"
+    baseline: "Python, DuckDB, and dbt in a local-first vendor-neutral runtime; BigQuery is a future provider overlay"
     flexible: "Libraries and tools that stay inside the approved platform (see ARCH-DEP-*)"
     change_summary: "Platform, provider, or state backend changed"
-    impact_paths: ["Dockerfile", "*/Dockerfile"]
+    impact_paths: ["Dockerfile", "*/Dockerfile", "pyproject.toml", "requirements*.txt"]
     change_paths: ["infrastructure/terraform/providers*", "infrastructure/terraform/backend*"]
     agents: ["architecture", "security-devops"]
 
   - id: BL-DATA
     area: "Data Architecture"
-    baseline: "Approved data platform, data stores, and data contracts"
-    flexible: "Schemas and queries within an approved store, following DATA-CON-*"
+    baseline: "DuckDB is the local data store; dbt artifacts provide initial lineage; shared and AI-consumed datasets use versioned contracts"
+    flexible: "Schemas and queries within DuckDB, following DATA-CON-*"
     change_summary: "New or replaced data store introduced"
-    impact_paths: ["data/*", "*data-contract*"]
+    impact_paths: ["data/*", "*data-contract*", "policies/data/*"]
     change_paths: ["infrastructure/database/*", "infrastructure/*/datastore*", "infrastructure/*/data-store*"]
     agents: ["architecture", "security-devops"]
 
   - id: BL-AI
     area: "AI Integration Pattern"
-    baseline: "Approved AI integration pattern (for example direct model call, RAG, agent) and guardrail approach"
-    flexible: "Prompt wording, evaluation datasets, and retrieval tuning within the pattern"
+    baseline: "Bounded AI explanations grounded only in approved contracts, quality results, and lineage evidence; local deterministic stub precedes provider integration"
+    flexible: "Prompt wording, evaluation datasets, and retrieval tuning within the approved explanation boundary"
     change_summary: "AI integration pattern changed"
     impact_paths: ["ai/guardrails/*", "ai/prompts/*contract*"]
     change_paths: []
@@ -66,8 +66,8 @@ boundaries:
 
   - id: BL-MODEL
     area: "AI Model Boundary"
-    baseline: "Approved model provider and model family, with data boundary"
-    flexible: "Version bumps and parameter tuning inside the approved family, after AI-MOD-* review"
+    baseline: "No production model provider is approved; any future provider must be registered with an explicit data boundary and AI-MOD-* review"
+    flexible: "Local stub implementation and provider-neutral interfaces before provider approval"
     change_summary: "Model provider or family changed"
     impact_paths: ["ai/models/*"]
     change_paths: []
