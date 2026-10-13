@@ -1,0 +1,4 @@
+# duckdb: approved local data store (BL-DATA/BL-TECH); MIT license; owner data-platform-team; update via reviewed PR
+duckdb>=1.0,<2
+# pytest: test runner only; MIT license; owner data-platform-team
+pytest>=9.0.3,<10
