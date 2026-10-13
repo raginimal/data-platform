@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Developer guide for building greenfield AI and data projects with the AI Delivery Foundation.">
+  <title>AI Delivery Foundation | Developer Guide</title>
+  <style>
+    :root {
+      --ink: #000000;
+      --muted: #53565a;
+      --paper: #ffffff;
+      --panel: #ffffff;
+      --line: #d0d0ce;
+      --green: #26890d;
+      --green-dark: #000000;
+      --mint: #e8f4d8;
+      --gold: #ed8b00;
+      --gold-soft: #fff1dc;
+      --blue: #0076a8;
+      --blue-soft: #e3f1f8;
+      --red: #da291c;
+      --shadow: 0 18px 50px rgba(0, 0, 0, .10);
+      --radius: 10px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font: 16px/1.65 Georgia, "Times New Roman", serif;
+    }
+    a { color: var(--green); text-underline-offset: 3px; }
+    a:hover { color: var(--green-dark); }
+    h1, h2, h3, h4, nav, .eyebrow, .label, .tag, th, .button-like {
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+    }
+    h1, h2, h3, h4 { line-height: 1.15; letter-spacing: 0; }
+    h1 { max-width: 760px; margin: 18px 0; font-size: clamp(2.5rem, 6vw, 5.8rem); font-weight: 700; }
+    h2 { margin: 0 0 22px; font-size: clamp(1.8rem, 3vw, 3rem); }
+    h3 { margin: 0 0 10px; font-size: 1.22rem; }
+    h4 { margin: 24px 0 8px; font-size: 1rem; color: var(--green-dark); }
+    p { margin: 0 0 16px; }
+    code, pre, .path { font-family: "Cascadia Code", Consolas, monospace; }
+    code { padding: 2px 5px; color: var(--green-dark); background: #f4f4f2; border-radius: 4px; font-size: .9em; }
+    pre {
+      overflow-x: auto;
+      margin: 14px 0 0;
+      padding: 18px 20px;
+      color: #ffffff;
+      background: #000000;
+      border: 1px solid #53565a;
+      border-radius: var(--radius);
+      font-size: .88rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+    .shell { width: min(calc(100% - 40px), var(--max)); margin: 0 auto; }
+    .skip { position: absolute; left: -10000px; }
+    .skip:focus { left: 16px; top: 12px; z-index: 10; padding: 8px 12px; color: white; background: var(--green-dark); }
+
+    header {
+      position: relative;
+      overflow: hidden;
+      color: #ffffff;
+      background: var(--green-dark);
+    }
+    header::after {
+      content: "";
+      position: absolute;
+      right: -120px;
+      bottom: -180px;
+      width: 520px;
+      height: 520px;
+      border: 1px solid rgba(134, 188, 37, .28);
+      border-radius: 50%;
+      box-shadow: 0 0 0 34px rgba(134, 188, 37, .06), 0 0 0 68px rgba(134, 188, 37, .04);
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(255,255,255,.16);
+    }
+    .brand { font: 700 1rem "Trebuchet MS", sans-serif; letter-spacing: .04em; }
+    nav { display: flex; flex-wrap: wrap; gap: 16px; font-size: .78rem; }
+    nav a { color: #f4f4f2; text-decoration: none; }
+    nav a:hover { color: white; }
+    .hero { position: relative; z-index: 1; padding: 78px 0 104px; }
+    .eyebrow { color: #86bc25; font-size: .78rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; }
+    .hero p { max-width: 660px; color: #f4f4f2; font-size: 1.18rem; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+    .tag { display: inline-flex; align-items: center; padding: 6px 10px; color: #ffffff; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; font-size: .73rem; font-weight: 700; }
+
+    main { padding: 70px 0 100px; }
+    section { scroll-margin-top: 24px; margin-bottom: 82px; }
+    .section-intro { max-width: 740px; color: var(--muted); font-size: 1.06rem; }
+    .kicker { margin-bottom: 10px; color: var(--green); font: 700 .76rem "Trebuchet MS", sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid.two { grid-template-columns: repeat(2, 1fr); }
+    .card {
+      padding: 24px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .card p:last-child { margin-bottom: 0; }
+    .card.accent { border-top: 4px solid var(--green); }
+    .card.gold { border-top: 4px solid var(--gold); }
+    .card.blue { border-top: 4px solid var(--blue); }
+    .status {
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font: 700 .68rem "Trebuchet MS", sans-serif;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .status.implemented { color: var(--green-dark); background: var(--mint); }
+    .status.conditional { color: #000000; background: var(--gold-soft); }
+    .status.recommended { color: #000000; background: var(--blue-soft); }
+    .callout { margin: 26px 0; padding: 20px 22px; border-left: 4px solid var(--gold); background: var(--gold-soft); }
+    .callout strong { color: #000000; }
+    .plain-list { margin: 12px 0 0; padding-left: 20px; }
+    .plain-list li { margin: 6px 0; }
+
+    .workflow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      margin-top: 30px;
+      padding: 22px;
+      background: #f4f4f2;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .workflow-step { position: relative; min-height: 142px; padding: 18px 14px; text-align: center; }
+    .workflow-step:not(:last-child)::after {
+      content: ">";
+      position: absolute;
+      top: 39px;
+      right: -8px;
+      color: var(--green);
+      font: 700 1.8rem "Trebuchet MS", sans-serif;
+    }
+    .number {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      margin: 0 auto 12px;
+      color: white;
+      background: var(--green);
+      border-radius: 50%;
+      font: 700 .9rem "Trebuchet MS", sans-serif;
+    }
+    .workflow-step h3 { font-size: 1rem; }
+    .workflow-step p { margin: 0; color: var(--muted); font-size: .88rem; }
+
+    .principle {
+      margin: 28px 0;
+      padding: 24px 28px;
+      color: var(--green-dark);
+      background: #e8f4d8;
+      border-left: 5px solid var(--green);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font: 700 clamp(1.15rem, 2.5vw, 1.65rem)/1.35 "Trebuchet MS", sans-serif;
+    }
+    .architecture-flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin: 24px 0;
+      padding: 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .architecture-node { position: relative; padding: 18px 14px; text-align: center; }
+    .architecture-node:not(:last-child)::after {
+      content: ">";
+      position: absolute;
+      top: 33px;
+      right: -7px;
+      color: var(--green);
+      font: 700 1.6rem "Trebuchet MS", sans-serif;
+    }
+    .architecture-node strong { display: block; margin-bottom: 6px; font: 700 1rem/1.2 "Trebuchet MS", sans-serif; }
+    .architecture-node span { color: var(--muted); font-size: .86rem; }
+    .release-lanes {
+      margin: 28px 0;
+      padding: 20px;
+      background: #f4f4f2;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    .lane { display: grid; grid-template-columns: 104px 1fr; gap: 14px; align-items: center; min-height: 76px; }
+    .lane + .lane { border-top: 1px solid var(--line); }
+    .lane-label { color: var(--green-dark); font: 700 .78rem "Trebuchet MS", sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+    .lane-track { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .lane-track::before { content: ""; position: absolute; }
+    .release-node { position: relative; z-index: 1; min-width: 104px; padding: 8px 10px; text-align: center; background: white; border: 1px solid var(--line); border-radius: 7px; font: 700 .75rem "Trebuchet MS", sans-serif; }
+    .release-node.feature { border-color: var(--gold); background: var(--gold-soft); }
+    .release-node.release { border-color: var(--blue); background: var(--blue-soft); }
+    .release-node.production { border-color: var(--green); background: var(--mint); }
+    .lane-arrow { color: var(--muted); font-weight: 700; }
+    .rollback-note { margin-top: 14px; padding: 12px 14px; color: #000000; background: var(--gold-soft); border-radius: 7px; font-size: .9rem; }
+
+    table { width: 100%; margin-top: 24px; border-collapse: collapse; background: var(--panel); box-shadow: var(--shadow); }
+    th, td { padding: 14px 16px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: var(--ink); background: #f4f4f2; font-size: .78rem; letter-spacing: .05em; text-transform: uppercase; }
+    td { font-size: .95rem; }
+    .agent-id { white-space: nowrap; color: var(--green-dark); font: 700 .78rem "Cascadia Code", Consolas, monospace; }
+
+    .prompt { margin: 16px 0; }
+    .prompt-label { display: block; margin-bottom: -1px; padding: 8px 12px; color: #ffffff; background: #000000; border-radius: var(--radius) var(--radius) 0 0; font: 700 .74rem "Trebuchet MS", sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+    .prompt pre { margin-top: 0; border-radius: 0 0 var(--radius) var(--radius); }
+    .example-flow { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .rule { padding: 16px; border-left: 3px solid var(--green); background: #f4f4f2; }
+    .rule strong { display: block; margin-bottom: 4px; font-family: "Trebuchet MS", sans-serif; }
+    footer { padding: 34px 0; color: #ffffff; background: var(--green-dark); }
+    footer p { margin: 0; font-size: .92rem; }
+    footer a { color: #ffffff; }
+
+    @media (max-width: 850px) {
+      .grid, .grid.two { grid-template-columns: 1fr; }
+      .workflow { grid-template-columns: 1fr; gap: 8px; }
+      .workflow-step { min-height: 0; padding: 12px 16px 18px 64px; text-align: left; }
+      .workflow-step .number { position: absolute; top: 10px; left: 10px; margin: 0; }
+      .workflow-step:not(:last-child)::after { content: "v"; top: auto; right: auto; bottom: -12px; left: 26px; font-size: 1.2rem; }
+      .architecture-flow { grid-template-columns: 1fr; gap: 8px; }
+      .architecture-node { min-height: 70px; padding: 12px 52px 12px 12px; text-align: left; }
+      .architecture-node:not(:last-child)::after { content: "v"; top: auto; right: auto; bottom: -12px; left: 18px; font-size: 1.2rem; }
+      .lane { grid-template-columns: 1fr; gap: 6px; padding: 12px 0; }
+      .lane-track { flex-wrap: wrap; }
+      .example-flow { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 620px) {
+      .shell { width: min(calc(100% - 28px), var(--max)); }
+      .topbar { align-items: flex-start; flex-direction: column; gap: 12px; }
+      nav { gap: 10px; }
+      .hero { padding: 54px 0 70px; }
+      main { padding-top: 48px; }
+      section { margin-bottom: 60px; }
+      h1 { font-size: 3rem; }
+      table { display: block; overflow-x: auto; white-space: normal; }
+      th, td { min-width: 180px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header>
+    <div class="shell">
+      <div class="topbar">
+        <div class="brand">AI DELIVERY FOUNDATION</div>
+        <nav aria-label="Page navigation">
+          <a href="#foundation">Foundation</a>
+          <a href="#workflow">Workflow</a>
+          <a href="#agents">Agents</a>
+          <a href="#example">Example</a>
+        </nav>
+      </div>
+      <div class="hero">
+        <div class="eyebrow">Developer guide / greenfield projects</div>
+        <h1>Build with structure. Ship with evidence.</h1>
+        <p>A practical guide to using the AI Delivery Foundation to turn a new AI or data idea into a governed, testable, reviewable project.</p>
+        <div class="hero-meta">
+          <span class="tag">Policies first</span>
+          <span class="tag">Architecture locked by boundary</span>
+          <span class="tag">AI review is advisory</span>
+          <span class="tag">Humans remain accountable</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="shell">
+    <section id="foundation">
+      <div class="kicker">01 / The foundation</div>
+      <h2>A reusable delivery system, not an application</h2>
+      <p class="section-intro">The AI Delivery Foundation is a technology-neutral repository skeleton for AI and data projects. It supplies the context, policies, review contracts, deterministic checks, and delivery hooks that a new project would otherwise have to invent.</p>
+      <div class="grid" style="margin-top: 28px;">
+        <article class="card accent">
+          <span class="status implemented">Implemented</span>
+          <h3>Repository context</h3>
+          <p><code>AGENTS.md</code>, <code>README.md</code>, <code>CONTRIBUTING.md</code>, <code>SECURITY.md</code>, <code>AI_POLICY.md</code>, and <code>DATA_POLICY.md</code> establish working rules and boundaries.</p>
+        </article>
+        <article class="card accent">
+          <span class="status implemented">Implemented</span>
+          <h3>Policies and governance</h3>
+          <p><code>policies/</code> contains stable IDs for architecture, dependencies, DevOps, security, data, AI, agents, and repository controls. ADR and exception templates provide decision records.</p>
+        </article>
+        <article class="card accent">
+          <span class="status implemented">Implemented</span>
+          <h3>Checks and delivery hooks</h3>
+          <p><code>scripts/</code> provides lint, test, security, validation, baseline, artifact, deployment, and rollback entry points. Stack-specific commands are overlays.</p>
+        </article>
+      </div>
+      <div class="callout"><strong>Know the boundary.</strong> Deterministic CI enforces checks. Advisory agents explain risks and recommendations. Human owners approve architecture, exceptions, risk acceptance, merges, and production.</div>
+      <div class="principle">Lock the architecture and engineering boundaries first; allow developers to implement features flexibly within those boundaries.</div>
+      <div class="architecture-flow" aria-label="Architecture baseline operating model">
+        <div class="architecture-node"><strong>Architecture baseline</strong><span>Approved decisions and protected boundaries</span></div>
+        <div class="architecture-node"><strong>Multiple engineers + Copilot</strong><span>Independent feature development inside the baseline</span></div>
+        <div class="architecture-node"><strong>Pull request + Baseline Guard</strong><span>Detect architectural drift and route review</span></div>
+        <div class="architecture-node"><strong>CI + agents + human approval</strong><span>Enforce rules, assess context, approve material changes</span></div>
+      </div>
+      <div class="grid two">
+        <article class="card accent">
+          <span class="status implemented">Lock as a shared baseline</span>
+          <p>Application architecture, component boundaries, approved technology, API and data contracts, AI integration, security and IAM, CI/CD, deployment, and ownership.</p>
+        </article>
+        <article class="card blue">
+          <span class="status recommended">Keep flexible for developers</span>
+          <p>Internal implementation details, feature-specific coding choices, local names and helpers, prompts within controls, and normal features that respect the architecture.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="setup">
+      <div class="kicker">02 / Start well</div>
+      <h2>Set up and plan the project before coding</h2>
+      <div class="grid two">
+        <article class="card">
+          <h3>Greenfield setup</h3>
+          <ol class="plain-list">
+            <li>Start from the foundation skeleton or a controlled copy of it.</li>
+            <li>Run <code>bash scripts/setup.sh</code> and review <code>PROJECT.yaml</code>.</li>
+            <li>Choose the language, project type, environments, owners, and cloud posture.</li>
+            <li>Read the relevant policies before adding dependencies, data, models, or infrastructure.</li>
+            <li>Set up protected <code>main</code>, CODEOWNERS, the PR template, and GitHub environments.</li>
+          </ol>
+        </article>
+        <article class="card">
+          <h3>Plan the first slice</h3>
+          <ol class="plain-list">
+            <li>Write the problem, intended users, unacceptable use, and success measures.</li>
+            <li>Identify data classification, retention, trust boundaries, and accountable owners.</li>
+            <li>Choose the smallest useful vertical slice and its acceptance tests.</li>
+            <li>List architecture decisions that need an ADR or baseline review.</li>
+            <li>Declare the policies, reviewers, and evidence the pull request will require.</li>
+          </ol>
+        </article>
+      </div>
+      <div class="grid two" style="margin-top: 18px;">
+        <article class="card accent">
+          <span class="status implemented">Greenfield</span>
+          <p>Establish the baseline, policies, ownership, and CI controls before the first feature. The separate project then tests whether independent engineers, prompts, models, and implementation choices can work safely inside the boundaries.</p>
+        </article>
+        <article class="card gold">
+          <span class="status recommended">Brownfield</span>
+          <p>Do not rebuild an existing application from the skeleton. Assess its repository, architecture, DevOps, security, data, and AI practices, then adopt the foundation progressively through a risk-ranked roadmap.</p>
+        </article>
+      </div>
+      <p style="margin-top: 22px;"><strong>Operating decision:</strong> keep the reusable foundation focused on its current Phase 1-6 capabilities while the greenfield sample project provides evidence for future framework improvements. Do not add a new framework feature merely to support the sample project.</p>
+    </section>
+
+    <section id="workflow">
+      <div class="kicker">03 / The golden path</div>
+      <h2>Move from idea to release through visible gates</h2>
+      <p class="section-intro">Every feature follows the same shape. The artifacts change by project; the accountability model does not.</p>
+      <div class="workflow" aria-label="End-to-end architecture and delivery workflow">
+        <div class="workflow-step"><span class="number">1</span><h3>Establish</h3><p>Architecture baseline and engineering boundaries</p></div>
+        <div class="workflow-step"><span class="number">2</span><h3>Develop</h3><p>Multiple engineers and Copilot build features independently</p></div>
+        <div class="workflow-step"><span class="number">3</span><h3>Guard</h3><p>PR and Baseline Guard detect protected-boundary changes</p></div>
+        <div class="workflow-step"><span class="number">4</span><h3>Review</h3><p>CI, agents, CODEOWNERS, and specialist owners review</p></div>
+        <div class="workflow-step"><span class="number">5</span><h3>Approve</h3><p>Humans approve architecture changes, risk, and merge</p></div>
+      </div>
+      <div class="callout"><strong>The normal feature PR is intentionally flexible.</strong> Different prompts, approved models, libraries, and implementation approaches are allowed when they respect the baseline. A protected architectural decision cannot be approved accidentally through an ordinary feature PR.</div>
+      <div class="grid two" style="margin-top: 18px;">
+        <article class="card">
+          <span class="status implemented">Implemented controls</span>
+          <p>Policy, quality, security, and CI workflows exist. The Architecture Baseline Guard classifies changes as <code>NO_BASELINE_IMPACT</code>, <code>BASELINE_IMPACT</code>, or <code>ARCHITECTURE_CHANGE</code>.</p>
+        </article>
+        <article class="card gold">
+          <span class="status conditional">Conditional overlays</span>
+          <p>Stack-specific linting, tests, dependency scans, SAST, IaC, deployment, health checks, and model evaluations are enabled by the project overlay when applicable.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="architecture">
+      <div class="kicker">04 / Architecture</div>
+      <h2>Lock boundaries, keep implementation flexible</h2>
+      <p class="section-intro">The architecture baseline records the decisions that would be expensive or risky to change. It does not freeze every class name, query, or algorithm.</p>
+      <table>
+        <thead><tr><th>Boundary</th><th>What it locks</th><th>What remains flexible</th></tr></thead>
+        <tbody>
+          <tr><td><code>BL-APP</code></td><td>Application pattern and layering</td><td>Module internals and algorithms</td></tr>
+          <tr><td><code>BL-COMP</code></td><td>Major components, ownership, service contracts</td><td>Private implementation behind a contract</td></tr>
+          <tr><td><code>BL-TECH</code></td><td>Language, runtime, cloud and platform boundary</td><td>Libraries inside the approved platform</td></tr>
+          <tr><td><code>BL-DATA</code></td><td>Data stores and data contracts</td><td>Queries and schemas within an approved store</td></tr>
+          <tr><td><code>BL-AI</code> / <code>BL-MODEL</code></td><td>AI integration pattern, provider and model boundary</td><td>Prompts, evaluations, tuning within the boundary</td></tr>
+          <tr><td><code>BL-SEC</code> / <code>BL-DEPLOY</code></td><td>Trust, identity, deployment and promotion topology</td><td>Least-privilege grants and sizing inside the model</td></tr>
+          <tr><td><code>BL-CICD</code> / <code>BL-REPO</code></td><td>Gates, artifact promotion, layout and ownership</td><td>Step implementation within the gates</td></tr>
+        </tbody>
+      </table>
+      <h3 style="margin-top: 30px;">When a boundary changes</h3>
+      <p>Run <code>bash scripts/validate-baseline.sh</code> with a changed-file list. A normal change follows the regular PR path. A baseline impact names the affected agents and owners. An architecture change requires an ADR using <code>docs/adr/template.md</code>; once the baseline is approved, CI fails if the ADR metadata is missing.</p>
+      <div class="prompt"><span class="prompt-label">Copilot prompt / architecture draft</span><pre>Read ARCHITECTURE.md, docs/architecture/baseline.yaml, and the relevant policies. Draft a small architecture decision for [capability]. Identify the boundary IDs, alternatives, risks, tests, rollback path, and whether this is NO_BASELINE_IMPACT, BASELINE_IMPACT, or ARCHITECTURE_CHANGE. Do not edit files.</pre></div>
+    </section>
+
+    <section id="feature-work">
+      <div class="kicker">05 / Feature delivery</div>
+      <h2>Use Copilot feature by feature</h2>
+      <div class="grid">
+        <article class="card accent"><h3>Understand</h3><p>Ask Copilot to locate the owning module, nearby tests, policy IDs, and existing patterns before proposing code.</p></article>
+        <article class="card accent"><h3>Specify</h3><p>Turn the acceptance criteria into a small interface, failure cases, test cases, and evidence requirements.</p></article>
+        <article class="card accent"><h3>Implement</h3><p>Ask for the smallest change in the existing style. Keep generated code untrusted until reviewed and tested.</p></article>
+        <article class="card accent"><h3>Verify</h3><p>Run focused tests and scans first, then the complete <code>bash scripts/check.sh</code> gate before committing.</p></article>
+        <article class="card accent"><h3>Review</h3><p>Use the relevant specialist agent for findings, not approval. Resolve evidence-based issues and escalate decisions to owners.</p></article>
+        <article class="card accent"><h3>Disclose</h3><p>Record material AI assistance, changed policies, tests, risks, and reviewers in the pull request.</p></article>
+      </div>
+      <div class="prompt"><span class="prompt-label">Copilot prompt / implementation slice</span><pre>Inspect the requested feature, its owning abstraction, nearby tests, and applicable policies. State one falsifiable hypothesis about the change, one focused check that could disconfirm it, and the smallest implementation. Then make the edit and run that focused check.</pre></div>
+      <div class="prompt"><span class="prompt-label">Copilot prompt / test-first behavior</span><pre>For [feature], list the observable behavior and failure cases. Add focused tests using existing repository conventions, implement only enough code to pass them, and report the exact validation command and result. Do not change unrelated files.</pre></div>
+    </section>
+
+    <section id="agents">
+      <div class="kicker">06 / Specialist review</div>
+      <h2>Four agents, four lenses, one human boundary</h2>
+      <p class="section-intro">The GitHub Copilot custom agents are read-only and advisory. They return evidence-based findings using the shared output contract; they cannot edit, merge, approve, waive, or deploy.</p>
+      <table>
+        <thead><tr><th>Agent</th><th>Use it for</th><th>It can recommend</th><th>It cannot do</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Architecture Reviewer</strong><br><span class="agent-id">ARCH-AGENT-001</span></td><td>Boundaries, dependencies, data contracts, ADRs, resilience, observability, baseline impact</td><td>Applicable policies, findings, ADR need, deterministic controls, owners</td><td>Edit files, approve architecture, accept risk, merge</td></tr>
+          <tr><td><strong>Security and DevOps Reviewer</strong><br><span class="agent-id">SEC-DEVOPS-AGENT-001</span></td><td>Secrets, IAM, dependencies, CI/CD, infrastructure, environments, deployment, rollback</td><td>Security evidence, remediation, scan interpretation, escalation</td><td>Access credentials, change IAM, suppress scans, approve production</td></tr>
+          <tr><td><strong>AI Engineering Reviewer</strong><br><span class="agent-id">AI-AGENT-001</span></td><td>Models, prompts, RAG, evaluations, guardrails, AI data, cost, hallucination and oversight</td><td>Model and prompt risks, evaluation gaps, guardrail recommendations</td><td>Select/deploy models, grant tools, approve AI risk, merge</td></tr>
+          <tr><td><strong>Code Quality Reviewer</strong><br><span class="agent-id">QUAL-AGENT-001</span></td><td>Changed source, tests, documentation, error handling, observability, duplication, maintainability</td><td>Quality findings and test gaps grounded in changed files</td><td>Edit, run commands, waive tests, approve or merge</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>Routing is change-aware.</strong> <code>config/ai/agent-routing.yaml</code> provides default path routing, while the baseline guard adds agents named by an affected boundary. The matching agent reviews; the approval matrix decides who must approve.</div>
+      <div class="prompt"><span class="prompt-label">Copilot prompt / specialist review</span><pre>Review only the changed files for [area]. Read the relevant agent contract, policies, and tests. Return evidence-based findings in the repository's YAML finding format with severity, confidence, policy ID, file, evidence, recommendation, and human action. Do not edit files or approve the change.</pre></div>
+    </section>
+
+    <section id="delivery">
+      <div class="kicker">07 / Delivery</div>
+      <h2>Branch, prove, review, merge</h2>
+      <p class="section-intro">Short-lived feature branches return to protected <code>main</code> through a pull request. Release tags identify approved commits; the delivery workflow builds once and promotes the same artifact through environments.</p>
+      <div class="release-lanes" aria-label="Branching, release, and rollback flow">
+        <div class="lane">
+          <div class="lane-label">Feature work</div>
+          <div class="lane-track"><span class="release-node feature">feature/*</span><span class="lane-arrow">-&gt;</span><span class="release-node feature">PR + checks</span><span class="lane-arrow">-&gt;</span><span class="release-node release">protected main</span></div>
+        </div>
+        <div class="lane">
+          <div class="lane-label">Release</div>
+          <div class="lane-track"><span class="release-node release">tag v1.0.0</span><span class="lane-arrow">-&gt;</span><span class="release-node">build once</span><span class="lane-arrow">-&gt;</span><span class="release-node production">DEV</span><span class="lane-arrow">-&gt;</span><span class="release-node production">TEST/UAT</span><span class="lane-arrow">-&gt;</span><span class="release-node production">PROD approval</span></div>
+        </div>
+        <div class="lane">
+          <div class="lane-label">Rollback</div>
+          <div class="lane-track"><span class="release-node production">issue detected</span><span class="lane-arrow">-&gt;</span><span class="release-node feature">human decision</span><span class="lane-arrow">-&gt;</span><span class="release-node release">previous digest</span><span class="lane-arrow">-&gt;</span><span class="release-node production">known-good PROD</span></div>
+        </div>
+        <div class="rollback-note"><strong>Rollback rule:</strong> restore the previous verified artifact by manifest and digest, validate health and data behavior, record the approver, then fix the cause through the normal PR path. Data migrations require a forward recovery plan; rollback does not automatically reverse them.</div>
+      </div>
+      <div class="grid two">
+        <article class="card">
+          <h3>Git and pull requests</h3>
+          <ol class="plain-list">
+            <li>Start from current protected <code>main</code>.</li>
+            <li>Use <code>feature/&lt;issue&gt;-&lt;name&gt;</code>, <code>bugfix/...</code>, or <code>hotfix/...</code>.</li>
+            <li>Use focused Conventional Commits where the stack permits.</li>
+            <li>Keep the PR small, link the work item, and complete every applicable PR section.</li>
+            <li>Declare architecture, security, data, AI, infrastructure, testing, and AI-assistance impact.</li>
+          </ol>
+        </article>
+        <article class="card">
+          <h3>Local proof</h3>
+          <pre>bash scripts/lint.sh
+bash scripts/test.sh
+bash scripts/security.sh
+bash scripts/validate.sh
+bash scripts/check.sh</pre>
+          <p style="margin-top: 14px;">Run the baseline guard with <code>CHANGED_FILES_FILE</code> when the change may touch an approved boundary.</p>
+        </article>
+      </div>
+      <h3 style="margin-top: 32px;">What CI actually provides</h3>
+      <table>
+        <thead><tr><th>Workflow</th><th>Current control</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><code>ci.yml</code></td><td>Build artifact, repository validation, and advisory review contract on pull requests</td><td><span class="status implemented">Implemented</span></td></tr>
+          <tr><td><code>quality.yml</code></td><td>Lint hooks and available tests</td><td><span class="status implemented">Implemented</span></td></tr>
+          <tr><td><code>security.yml</code></td><td>Secret checks and optional dependency/SAST/container/IaC hooks</td><td><span class="status conditional">Conditional overlays</span></td></tr>
+          <tr><td><code>policy.yml</code></td><td>Structure, policies, exceptions, PR governance, risk, and baseline impact</td><td><span class="status implemented">Implemented</span></td></tr>
+          <tr><td><code>cd.yml</code></td><td>Build once, promote artifact through DEV, TEST/UAT, and PROD environment hooks</td><td><span class="status conditional">Overlay-dependent</span></td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top: 20px;">Merge requires passing checks, CODEOWNER review, and any specialist or accountable-owner approval required by <code>docs/governance/approval-matrix.md</code>. Agents do not replace human approval.</p>
+    </section>
+
+    <section id="practice">
+      <div class="kicker">08 / Engineering practice</div>
+      <h2>Good defaults for serious work</h2>
+      <div class="example-flow">
+        <div class="rule"><strong>Keep changes small</strong>Make work reviewable, reversible, traceable to an issue, and isolated from unrelated cleanup.</div>
+        <div class="rule"><strong>Make dependencies explicit</strong>Document purpose, owner, license, provenance, update strategy, and vulnerability risk.</div>
+        <div class="rule"><strong>Validate at boundaries</strong>Treat repository content, external inputs, model output, and tool results as untrusted.</div>
+        <div class="rule"><strong>Protect data</strong>Classify before processing. Minimize collection and retention. Use synthetic or de-identified test fixtures.</div>
+        <div class="rule"><strong>Never hide a failure</strong>Fix failed checks or record why a check is not applicable; never disable a control to make CI green.</div>
+        <div class="rule"><strong>Build once</strong>Identify artifacts by commit and promote the same artifact. Keep rollback and post-deployment validation documented.</div>
+        <div class="rule"><strong>Use AI carefully</strong>Do not send confidential, personal, regulated, production, credential, or proprietary data to an unapproved AI tool.</div>
+        <div class="rule"><strong>Keep models governed</strong>Version models, prompts, retrieval sources, evaluations, guardrails, and safety settings; evaluate quality, latency, cost, and refusal behavior.</div>
+      </div>
+    </section>
+
+    <section id="example">
+      <div class="kicker">09 / Worked example</div>
+      <h2><code>ai-data-platform</code>: a local-first data project</h2>
+      <p class="section-intro">This example shows how the Foundation turns an approved architecture into an implementation sequence. It is an architecture walkthrough, not an application implementation.</p>
+      <div class="grid two" style="margin-top: 28px;">
+        <article class="card accent">
+          <span class="status implemented">Approved project shape</span>
+          <h3>Python + DuckDB + dbt</h3>
+          <p>Python owns orchestration and input validation. DuckDB provides local persistence. dbt owns SQL transformations and produces manifest/catalog evidence. BigQuery remains a future provider overlay.</p>
+        </article>
+        <article class="card blue">
+          <span class="status recommended">Future capability</span>
+          <h3>Governed explanations</h3>
+          <p>A later assistant will explain approved contracts, quality results, and lineage evidence. It will not query unrestricted raw data or take autonomous actions.</p>
+        </article>
+      </div>
+      <h3 style="margin-top: 32px;">A feature path</h3>
+      <table>
+        <thead><tr><th>Step</th><th>Developer action</th><th>Evidence</th><th>Review path</th></tr></thead>
+        <tbody>
+          <tr><td>Define ingestion</td><td>Choose synthetic input, schema, classification, owner, and failure behavior</td><td>Data contract and unit tests</td><td>Architecture + data/security owner if contract is shared</td></tr>
+          <tr><td>Load raw data</td><td>Implement a Python boundary and DuckDB adapter</td><td>Malformed-input, duplicate, and repeatability tests</td><td>Code Quality; Security if trust or sensitive data changes</td></tr>
+          <tr><td>Curate a model</td><td>Use dbt sources, staging, intermediate logic, and a mart</td><td>dbt tests, schema docs, manifest</td><td>Code Quality + Architecture for boundary changes</td></tr>
+          <tr><td>Publish evidence</td><td>Link contract, owner, quality results, and lineage</td><td>Contract compatibility and impact report</td><td>Data owner; Architecture for breaking change</td></tr>
+          <tr><td>Add explanations</td><td>Start with a local stub and bounded evidence retrieval</td><td>Evaluation cases, guardrail tests, refusal behavior</td><td>AI, Security, Data, and Architecture owners</td></tr>
+        </tbody>
+      </table>
+      <div class="prompt"><span class="prompt-label">Copilot prompt / ai-data-platform slice</span><pre>Work in the ai-data-platform architecture: Python orchestration, DuckDB local persistence, dbt SQL transformations, versioned data contracts, and dbt-artifact lineage. For [slice], inspect ARCHITECTURE.md and the relevant DATA, SECURITY, or AI policies. Propose the smallest testable change, name its baseline impact, add focused tests, and run the narrowest validation. Do not introduce BigQuery, a model provider, or new infrastructure unless an ADR and approved boundary require it.</pre></div>
+      <p>When the project is ready for a real provider, the model identifier, data boundary, prompt, guardrails, evaluation set, cost controls, and human escalation path become reviewable AI assets. The provider is not treated as an invisible implementation detail.</p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <p><strong>AI Delivery Foundation</strong> &middot; Start with policy. Make boundaries explicit. Leave decisions to accountable humans.</p>
+      <p><a href="../README.md">Foundation overview</a> &nbsp; <a href="../docs/developer-workflow.md">Developer workflow</a> &nbsp; <a href="../docs/agents-and-skills.md">Agents and skills</a></p>
+    </div>
+  </footer>
+</body>
+</html>
