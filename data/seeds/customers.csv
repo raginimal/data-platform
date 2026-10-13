@@ -1,0 +1,5 @@
+customer_id,name,email,region,signup_date
+1,Customer One,customer1@example.com,EMEA,2025-11-01
+2,Customer Two,customer2@example.com,AMER,2025-11-15
+3,Customer Three,customer3@example.com,APAC,2025-12-02
+4,Customer Four,customer4@example.com,EMEA,2025-12-20
